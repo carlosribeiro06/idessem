@@ -5,6 +5,17 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 ## [Nao Publicado]
 
+## [1.3.0] - 2026-06-09
+
+### Adicionado
+
+- Suporte ao formato estendido do arquivo `hidr.dat`, com os coeficientes dos polinômios volume-cota e cota-área em precisão dupla (registros de 832 bytes), através do novo registro `RegistroUHEHidrF64`. A classe `Hidr` detecta o formato automaticamente pelo tamanho do arquivo, reconhecendo cadastros de 320 ou 600 usinas em registros de 792 ou 832 bytes, com possibilidade de forçar via `version="f32"` ou `version="f64"`.
+- Propriedade `tamanho_registro` e método `converte_tamanho_registro` na classe `Hidr`, permitindo inspecionar e converter entre os formatos de precisão simples e dupla.
+
+### Modificado
+
+- Montagem vetorizada do DataFrame `cadastro` da classe `Hidr` (construção em lote em vez de linha a linha), reduzindo significativamente o tempo de leitura de arquivos `hidr.dat`. As colunas inteiras passam a usar o tipo nullable `Int64`.
+
 ## [1.2.1] - 2026-03-17
 
 ### Corrigido
