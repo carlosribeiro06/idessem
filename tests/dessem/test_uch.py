@@ -24,6 +24,8 @@ from tests.mocks.arquivos.uch import (
     MockUchPadraoData,
     MockUchTonToffUnidade,
     MockUchGminGmaxUnidade,
+    MockUchGminGmaxConjunto,
+    MockUchGminGmaxUsina,
     MockUchCondicaoInicialUnidade,
     MockUchOpcaoVazioUnidade,
     MockUchConsumoAguaVazioUnidade,
@@ -151,6 +153,46 @@ def test_registro_ghmin_ghmax_unidade():
     assert r.geracao_maxima_unidade == 23
     r.geracao_maxima_unidade = 0
     assert r.geracao_maxima_unidade == 0
+
+def test_registro_ghmin_ghmax_conjunto():
+    m: MagicMock = mock_open(read_data="".join(MockUchGminGmaxConjunto))
+    r = UchGminGmaxConjunto()
+    with patch("builtins.open", m):
+        with open("", "") as fp:
+            r.read(fp)
+
+    assert r.data == [1, 1, 1, 3.5, 23]
+    assert r.codigo_usina == 1
+    r.codigo_usina = 0
+    assert r.codigo_usina == 0
+    assert r.codigo_conjunto == 1
+    r.codigo_conjunto = 0
+    assert r.codigo_conjunto == 0
+    assert r.geracao_minima_conjunto == 3.5
+    r.geracao_minima_conjunto = 0
+    assert r.geracao_minima_conjunto == 0
+    assert r.geracao_maxima_conjunto == 23
+    r.geracao_maxima_conjunto = 0
+    assert r.geracao_maxima_conjunto == 0
+
+def test_registro_ghmin_ghmax_usina():
+    m: MagicMock = mock_open(read_data="".join(MockUchGminGmaxUsina))
+    r = UchGminGmaxUsina()
+    with patch("builtins.open", m):
+        with open("", "") as fp:
+            r.read(fp)
+
+    assert r.data == [1, 1, 1, 3.5, 23]
+    assert r.codigo_usina == 1
+    r.codigo_usina = 0
+    assert r.codigo_usina == 0
+    assert r.geracao_minima_usina == 3.5
+    r.geracao_minima_usina = 0
+    assert r.geracao_minima_usina == 0
+    assert r.geracao_maxima_usina == 23
+    r.geracao_maxima_usina = 0
+    assert r.geracao_maxima_usina == 0
+
 
 
 def test_registro_condicao_inicial_unidade():
