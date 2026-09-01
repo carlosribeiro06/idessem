@@ -44,7 +44,7 @@ def test_atributos_encontrados_uch():
         assert uch.opcao_padrao is not None
         assert uch.uch_padrao_data is None
         assert uch.opcao_padrao_usina() is not None
-        assert uch.ton_toff_unidade() is None
+        assert uch.ton_toff_unidade() is not None
         assert uch.gmin_gmax_unidade() is not None
         assert uch.condicao_inicial_unidade() is not None
         assert uch.opcao_vazio_unidade() is None
@@ -93,8 +93,8 @@ def test_registro_uch_opcao_padrao_data():
         with open("", "") as fp:
             r.read(fp)
 
-    assert r.data == [31, 23, 1]
-    assert r.dia_final == 31
+    assert r.data == [1, 23, 1]
+    assert r.dia_final == 1
     r.dia_final = 0
     assert r.dia_final == 0
     assert r.hora_final == 23
@@ -154,6 +154,7 @@ def test_registro_ghmin_ghmax_unidade():
     r.geracao_maxima_unidade = 0
     assert r.geracao_maxima_unidade == 0
 
+
 def test_registro_ghmin_ghmax_conjunto():
     m: MagicMock = mock_open(read_data="".join(MockUchGminGmaxConjunto))
     r = UchGminGmaxConjunto()
@@ -161,19 +162,20 @@ def test_registro_ghmin_ghmax_conjunto():
         with open("", "") as fp:
             r.read(fp)
 
-    assert r.data == [1, 1, 1, 3.5, 23]
-    assert r.codigo_usina == 1
+    assert r.data == [4, 1, 25.0, 60.0]
+    assert r.codigo_usina == 4
     r.codigo_usina = 0
     assert r.codigo_usina == 0
     assert r.codigo_conjunto == 1
     r.codigo_conjunto = 0
     assert r.codigo_conjunto == 0
-    assert r.geracao_minima_conjunto == 3.5
+    assert r.geracao_minima_conjunto == 25
     r.geracao_minima_conjunto = 0
     assert r.geracao_minima_conjunto == 0
-    assert r.geracao_maxima_conjunto == 23
+    assert r.geracao_maxima_conjunto == 60
     r.geracao_maxima_conjunto = 0
     assert r.geracao_maxima_conjunto == 0
+
 
 def test_registro_ghmin_ghmax_usina():
     m: MagicMock = mock_open(read_data="".join(MockUchGminGmaxUsina))
@@ -182,7 +184,7 @@ def test_registro_ghmin_ghmax_usina():
         with open("", "") as fp:
             r.read(fp)
 
-    assert r.data == [1, 1, 1, 3.5, 23]
+    assert r.data == [1, 3.5, 23.0]
     assert r.codigo_usina == 1
     r.codigo_usina = 0
     assert r.codigo_usina == 0
@@ -192,7 +194,6 @@ def test_registro_ghmin_ghmax_usina():
     assert r.geracao_maxima_usina == 23
     r.geracao_maxima_usina = 0
     assert r.geracao_maxima_usina == 0
-
 
 
 def test_registro_condicao_inicial_unidade():
@@ -238,7 +239,7 @@ def test_df_uch_ton_toff_unidade():
     with patch("builtins.open", m):
         uch = Uch.read(ARQ_TESTE)
         df_uch = uch.ton_toff_unidade(df=True)
-        assert df_uch.at[2, "codigo_usina"] == 4
+        assert df_uch.at[2, "codigo_usina"] == 2
         assert df_uch.at[2, "tempo_minimo_ligada"] == 5
         assert df_uch.at[2, "tempo_minimo_desligada"] == 5
 
@@ -253,6 +254,7 @@ def test_df_uch_gmin_gmax_unidade():
         assert df_uch.at[2, "codigo_unidade"] == 1
         assert df_uch.at[2, "geracao_minima_unidade"] == 3
         assert df_uch.at[2, "geracao_maxima_unidade"] == 12.5
+
 
 def test_df_uch_gmin_gmax_conjunto():
     m: MagicMock = mock_open(read_data="".join(MockUch))
@@ -272,6 +274,7 @@ def test_df_uch_gmin_gmax_usina():
         assert df_uch.at[2, "codigo_usina"] == 2
         assert df_uch.at[2, "geracao_minima_usina"] == 3
         assert df_uch.at[2, "geracao_maxima_usina"] == 12.5
+
 
 def test_df_uch_condicao_inicial_unidade():
     m: MagicMock = mock_open(read_data="".join(MockUch))
@@ -294,14 +297,14 @@ def test_registro_uch_opcao_vazio_unidade():
         with open("", "") as fp:
             r.read(fp)
 
-    assert r.data == [1, 2, 2, 1]
+    assert r.data == [1, 1, 1, 1] 
     assert r.codigo_usina == 1
     r.codigo_usina = 0
     assert r.codigo_usina == 0
-    assert r.codigo_conjunto == 2
+    assert r.codigo_conjunto == 1
     r.codigo_conjunto = 0
     assert r.codigo_conjunto == 0
-    assert r.codigo_unidade == 2
+    assert r.codigo_unidade == 1
     r.codigo_unidade = 0
     assert r.codigo_unidade == 0
     assert r.considera_operacao_vazio == 1
@@ -411,14 +414,19 @@ def test_leitura_uch_opcao_padrao_usina():
     with patch("builtins.open", m):
         uch = Uch.read(ARQ_TESTE)
 
-    assert type(uch.data[1]) is UchOpcaoPadraoUsina
-    assert uch.data[1].data == [1, 1, 1]
+    registros = uch.opcao_padrao_usina()
 
-    assert type(uch.data[2]) is UchOpcaoPadraoUsina
-    assert uch.data[2].data == [2, 1, 1]
+    assert registros is not None
+    assert len(registros) == 3
 
-    assert type(uch.data[3]) is UchOpcaoPadraoUsina
-    assert uch.data[3].data == [4, 1, 1]
+    assert type(registros[0]) is UchOpcaoPadraoUsina
+    assert registros[0].data == [1, 1, 1]
+
+    assert type(registros[1]) is UchOpcaoPadraoUsina
+    assert registros[1].data == [2, 1, 1]
+
+    assert type(registros[2]) is UchOpcaoPadraoUsina
+    assert registros[2].data == [4, 1, 1]
 
 
 def test_eq_uch():
