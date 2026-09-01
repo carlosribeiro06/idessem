@@ -2,8 +2,8 @@ from typing import Any, Type, TypeVar, Optional, List, Union
 from cfinterface.files.registerfile import RegisterFile
 import pandas as pd  # type: ignore
 from idessem.dessem.modelos.uch import (
-    UchOpcaoPadrao,
     UchOpcaoPadraoUsina,
+    UchOpcaoPadrao,
     UchPadraoData,
     UchOpcaoVazioUnidade,
     UchTonToffUnidade,
@@ -26,8 +26,8 @@ class Uch(RegisterFile):
     T = TypeVar("T", bound=Register)
 
     REGISTERS = [
-        UchOpcaoPadrao,
         UchOpcaoPadraoUsina,
+        UchOpcaoPadrao,
         UchPadraoData,
         UchOpcaoVazioUnidade,
         UchTonToffUnidade,
@@ -39,7 +39,6 @@ class Uch(RegisterFile):
         UchLimiteMudancaStatusVazioUnidade,
         UchCustoPartidaVazioUnidade,
         UchCustoPartidaUnidade,
-        UchCustoPartidaVazioUnidade,
     ]
 
     def __registros_ou_df(
@@ -247,6 +246,86 @@ class Uch(RegisterFile):
             codigo_unidade=codigo_unidade,
             geracao_minima_unidade=geracao_minima_unidade,
             geracao_maxima_unidade=geracao_maxima_unidade,
+            df=df,
+        )
+
+    def gmin_gmax_conjunto(
+        self,
+        codigo_usina: Optional[int] = None,
+        codigo_conjunto: Optional[int] = None,
+        geracao_minima_conjunto: Optional[float] = None,
+        geracao_maxima_conjunto: Optional[float] = None,
+        df: bool = False,
+    ) -> Optional[
+        Union[
+            UchGminGmaxConjunto,
+            List[UchGminGmaxConjunto],
+            pd.DataFrame,
+        ]
+    ]:
+        """
+        Obtém registros que determinam a geração mínima e máxima
+        do conjunto de máquinas de uma usina hidrelétrica. Opcionalmente, 
+        o retorno pode ser transformado em um `DataFrame`, 
+        apenas para leitura das informações.
+
+        :param codigo_usina: código que especifica a usina
+        :type codigo_usina: int | None
+        :param codigo_conjunto: código do conjunto da usina
+        :type codigo_conjunto: int | None
+        :param geracao_minima_conjunto: geração mínima do conjunto
+        :type geracao_minima_conjunto: float | None
+        :param geracao_maxima_conjunto: geração máxima do conjunto
+        :type geracao_maxima_conjunto: float | None
+        :return: Um ou mais registros, se existirem.
+        :rtype: `UchGminGmaxConjunto` |
+            List[`UchGminGmaxConjunto`] | `None` | `DataFrame`
+        """
+
+        return self.__registros_ou_df(
+            UchGminGmaxConjunto,
+            codigo_usina=codigo_usina,
+            codigo_conjunto=codigo_conjunto,
+            geracao_minima_conjunto=geracao_minima_conjunto,
+            geracao_maxima_conjunto=geracao_maxima_conjunto,
+            df=df,
+        )
+
+    def gmin_gmax_usina(
+        self,
+        codigo_usina: Optional[int] = None,
+        geracao_minima_usina: Optional[float] = None,
+        geracao_maxima_usina: Optional[float] = None,
+        df: bool = False,
+    ) -> Optional[
+        Union[
+            UchGminGmaxUsina,
+            List[UchGminGmaxUsina],
+            pd.DataFrame,
+        ]
+    ]:
+        """
+        Obtém registros que determinam a geração mínima e máxima
+        de uma usina hidrelétrica. Opcionalmente, 
+        o retorno pode ser transformado em um `DataFrame`, 
+        apenas para leitura das informações.
+
+        :param codigo_usina: código que especifica a usina
+        :type codigo_usina: int | None
+        :param geracao_minima_usina: geração mínima da usina
+        :type geracao_minima_usina: float | None
+        :param geracao_maxima_usina: geração máxima da usina
+        :type geracao_maxima_usina: float | None
+        :return: Um ou mais registros, se existirem.
+        :rtype: `UchGminGmaxUsina` |
+            List[`UchGminGmaxUsina`] | `None` | `DataFrame`
+        """
+
+        return self.__registros_ou_df(
+            UchGminGmaxUsina,
+            codigo_usina=codigo_usina,
+            geracao_minima_usina=geracao_minima_usina,
+            geracao_maxima_usina=geracao_maxima_usina,
             df=df,
         )
 

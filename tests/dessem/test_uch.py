@@ -1,7 +1,7 @@
 from idessem.dessem.uch import Uch
 from idessem.dessem.modelos.uch import (
-    UchOpcaoPadrao,
     UchOpcaoPadraoUsina,
+    UchOpcaoPadrao,
     UchPadraoData,
     UchOpcaoVazioUnidade,
     UchTonToffUnidade,
@@ -19,8 +19,8 @@ from unittest.mock import MagicMock, patch
 
 from tests.mocks.arquivos.uch import (
     MockUch,
-    MockUchOpcaoPadrao,
     MockUchOpcaoPadraoUsina,
+    MockUchOpcaoPadrao,
     MockUchPadraoData,
     MockUchTonToffUnidade,
     MockUchGminGmaxUnidade,
@@ -65,7 +65,7 @@ def test_registro_uch_opcao_padrao():
     assert r.considera_uch == 0
 
 
-def test_registro_uch_opcao_usina():
+def test_registro_uch_opcao_padrao_usina():
     m: MagicMock = mock_open(read_data="".join(MockUchOpcaoPadraoUsina))
     r = UchOpcaoPadraoUsina()
     with patch("builtins.open", m):
@@ -181,13 +181,14 @@ def test_registro_condicao_inicial_unidade():
     assert r.turbinamento_inicial_unidade == -1
 
 
-def test_df_uch_opcao_usina():
+def test_df_uch_opcao_padrao_usina():
     m: MagicMock = mock_open(read_data="".join(MockUch))
     with patch("builtins.open", m):
         uch = Uch.read(ARQ_TESTE)
-        df_uch = uch.opcao_usina(df=True)
+        df_uch = uch.opcao_padrao_usina(df=True)
         assert df_uch.at[2, "codigo_usina"] == 1
         assert df_uch.at[2, "considera_uch_usina"] == 4
+        assert df_uch.at[2, "tipo_agregacao"] == 3
 
 
 def test_df_uch_ton_toff_usina():
@@ -211,6 +212,24 @@ def test_df_uch_gmin_gmax_unidade():
         assert df_uch.at[2, "geracao_minima_unidade"] == 3
         assert df_uch.at[2, "geracao_maxima_unidade"] == 12.5
 
+def test_df_uch_gmin_gmax_conjunto():
+    m: MagicMock = mock_open(read_data="".join(MockUch))
+    with patch("builtins.open", m):
+        uch = Uch.read(ARQ_TESTE)
+        df_uch = uch.gmin_gmax_conjunto(df=True)
+        assert df_uch.at[2, "codigo_usina"] == 2
+        assert df_uch.at[2, "codigo_conjunto"] == 1
+        assert df_uch.at[2, "geracao_minima_conjunto"] == 3
+        assert df_uch.at[2, "geracao_maxima_conjunto"] == 12.5
+
+def test_df_uch_gmin_gmax_usina():
+    m: MagicMock = mock_open(read_data="".join(MockUch))
+    with patch("builtins.open", m):
+        uch = Uch.read(ARQ_TESTE)
+        df_uch = uch.gmin_gmax_usina(df=True)
+        assert df_uch.at[2, "codigo_usina"] == 2
+        assert df_uch.at[2, "geracao_minima_usina"] == 3
+        assert df_uch.at[2, "geracao_maxima_usina"] == 12.5
 
 def test_df_uch_condicao_inicial_unidade():
     m: MagicMock = mock_open(read_data="".join(MockUch))
@@ -337,6 +356,28 @@ def test_registro_uch_custo_partida_unidade():
     r.custo_partida = 0
     assert r.custo_partida == 0
 
+def test_leitura_uch_opcao_padrao_usina():
+    m: MagicMock = mock_open(
+        read_data=(
+            "UCH-OPCAO-PADRAO;1\n"
+            "UCH-OPCAO-PADRAO-USINA;1;1;1\n"
+            "UCH-OPCAO-PADRAO-USINA;2;1;1\n"
+            "UCH-OPCAO-PADRAO-USINA;4;1;1\n"
+        )
+    )
+
+    with patch("builtins.open", m):
+        uch = Uch.read(ARQ_TESTE)
+
+    assert type(uch.data[1]) is UchOpcaoPadraoUsina
+    assert uch.data[1].data == [1, 1, 1]
+
+    assert type(uch.data[2]) is UchOpcaoPadraoUsina
+    assert uch.data[2].data == [2, 1, 1]
+
+    assert type(uch.data[3]) is UchOpcaoPadraoUsina
+    assert uch.data[3].data == [4, 1, 1]
+
 
 def test_eq_uch():
     m: MagicMock = mock_open(read_data="".join(MockUch))
@@ -351,5 +392,5 @@ def test_neq_uch():
     with patch("builtins.open", m):
         arq1 = Uch.read(ARQ_TESTE)
         arq2 = Uch.read(ARQ_TESTE)
-        arq1.opcao_usina()[0].codigo_usina = -1
+        arq1.opcao_padrao_usina()[0].codigo_usina = -1
         assert arq1 != arq2
