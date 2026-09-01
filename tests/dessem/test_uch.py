@@ -233,11 +233,11 @@ def test_df_uch_opcao_padrao_usina():
         assert df_uch.at[2, "tipo_agregacao"] == 3
 
 
-def test_df_uch_ton_toff_usina():
+def test_df_uch_ton_toff_unidade():
     m: MagicMock = mock_open(read_data="".join(MockUch))
     with patch("builtins.open", m):
         uch = Uch.read(ARQ_TESTE)
-        df_uch = uch.ton_toff_usina(df=True)
+        df_uch = uch.ton_toff_unidade(df=True)
         assert df_uch.at[2, "codigo_usina"] == 4
         assert df_uch.at[2, "tempo_minimo_ligada"] == 5
         assert df_uch.at[2, "tempo_minimo_desligada"] == 5

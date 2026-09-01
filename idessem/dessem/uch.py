@@ -74,7 +74,9 @@ class Uch(RegisterFile):
         considera_uch_usina: Optional[int] = None,
         tipo_agregacao: Optional[int] = None,
         df: bool = False,
-    ) -> Optional[Union[UchOpcaoPadraoUsina, List[UchOpcaoPadraoUsina], pd.DataFrame]]:
+    ) -> Optional[
+        Union[UchOpcaoPadraoUsina, List[UchOpcaoPadraoUsina], pd.DataFrame]
+    ]:
         """
         Obtém registros que identificam a consideração de UCH
         para cada usina. Opcionalmente, o retorno pode ser transformado
@@ -96,7 +98,7 @@ class Uch(RegisterFile):
             considera_uch_usina=considera_uch_usina,
             tipo_agregacao=tipo_agregacao,
             df=df,
-            )
+        )
 
     @property
     def uch_padrao_data(
@@ -265,8 +267,8 @@ class Uch(RegisterFile):
     ]:
         """
         Obtém registros que determinam a geração mínima e máxima
-        do conjunto de máquinas de uma usina hidrelétrica. Opcionalmente, 
-        o retorno pode ser transformado em um `DataFrame`, 
+        do conjunto de máquinas de uma usina hidrelétrica. Opcionalmente,
+        o retorno pode ser transformado em um `DataFrame`,
         apenas para leitura das informações.
 
         :param codigo_usina: código que especifica a usina
@@ -306,8 +308,8 @@ class Uch(RegisterFile):
     ]:
         """
         Obtém registros que determinam a geração mínima e máxima
-        de uma usina hidrelétrica. Opcionalmente, 
-        o retorno pode ser transformado em um `DataFrame`, 
+        de uma usina hidrelétrica. Opcionalmente,
+        o retorno pode ser transformado em um `DataFrame`,
         apenas para leitura das informações.
 
         :param codigo_usina: código que especifica a usina
@@ -466,7 +468,7 @@ class Uch(RegisterFile):
             limite_maximo_mudancas=limite_maximo_mudancas,
             df=df,
         )
-    
+
     def custo_partida_vazio_unidade(
         self,
         codigo_usina: Optional[int] = None,

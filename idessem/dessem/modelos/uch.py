@@ -795,7 +795,6 @@ class UchLimiteMudancaStatusVazioUnidade(Register):
         self.data[3] = c
 
 
-
 class UchCustoPartidaUnidade(Register):
     """ """
 
